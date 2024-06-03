@@ -1,31 +1,36 @@
-import { useState } from "react";
 import { AddContactModel } from "../models/contact";
 import { contactService } from "../services/contactService";
 import { useDispatch, useSelector } from "react-redux";
-import { ContactState } from "../stores/contactSlice";
+import { ContactState, setModalState } from "../stores/contactSlice";
 import Loading from "./Loading";
+import { RiCloseCircleLine } from "react-icons/ri";
+import { useFormContext } from "react-hook-form";
+import { Schema } from "../models/schema";
+import { Stack, TextField } from "@mui/material";
 
 const ContactForm = () => {
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-
   const dispatch = useDispatch();
   const error = useSelector((state: ContactState) => state.error);
   const isLoading = useSelector((state: ContactState) => state.isLoading);
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useFormContext<Schema>();
 
-    const data: AddContactModel = {
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-    };
-
+  const createContact = async (data: AddContactModel) => {
     await contactService.createNewContact(data, dispatch);
+
+    setTimeout(() => {
+      reset();
+    }, 2000);
+  };
+
+  const handleClose = () => {
+    dispatch(setModalState(false));
+    reset();
   };
 
   if (isLoading === true) {
@@ -34,45 +39,49 @@ const ContactForm = () => {
 
   return (
     <div>
-      <h2>Create new contact</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="firstName">First Name:</label>
-          <input
-            type="text"
-            id="firstName"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+      <div className="flex justify-between">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-700">
+          Add New Contact
+        </h2>
+        <RiCloseCircleLine
+          className="h-10 w-6 text-gray-500 hover:text-gray-600 hover:cursor-pointer"
+          onClick={handleClose}
+        />
+      </div>
+      <form onSubmit={handleSubmit(createContact)}>
+        <Stack sx={{ gap: 2 }}>
+          <TextField
+            {...register("firstName")}
+            label="First Name"
+            error={!!errors.firstName}
+            helperText={errors.firstName?.message}
           />
-        </div>
-        <div>
-          <label htmlFor="lastName">Last Name:</label>
-          <input
-            type="text"
-            id="lastName"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+          <TextField
+            {...register("lastName")}
+            label="Last Name"
+            error={!!errors.lastName}
+            helperText={errors.lastName?.message}
           />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="text"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+          <TextField
+            {...register("phoneNumber")}
+            label="Phone Number"
+            error={!!errors.phoneNumber}
+            helperText={errors.phoneNumber?.message}
           />
-        </div>
-        <div>
-          <label htmlFor="phoneNumber">Phone Number:</label>
-          <input
-            type="text"
-            id="phoneNumber"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+          <TextField
+            {...register("email")}
+            label="Email"
+            error={!!errors.email}
+            helperText={errors.email?.message}
           />
-        </div>
-        <button type="submit">Create Contact</button>
+        </Stack>
+        <button
+          className="bg-sky-600 p-2 rounded-full my-2 text-white px-5 hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-sky-300"
+          type="submit"
+          disabled={!isValid}
+        >
+          Create Contact
+        </button>
       </form>
       {error && <div className="error">{error}</div>}
     </div>
