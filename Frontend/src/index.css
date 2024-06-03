@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input,
+button,
+label {
+  margin: 5px;
+}
+
+.loading {
+  margin: 10px;
+}
+
+.error {
+  margin: 10px auto;
+  text-align: center;
+  color: red;
+  font-weight: bolder;
+}
