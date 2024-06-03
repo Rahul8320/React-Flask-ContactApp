@@ -3,6 +3,7 @@ import { AddContactModel } from "../models/contact";
 import { contactService } from "../services/contactService";
 import { useDispatch, useSelector } from "react-redux";
 import { ContactState } from "../stores/contactSlice";
+import Loading from "./Loading";
 
 const ContactForm = () => {
   const [firstName, setFirstName] = useState<string>("");
@@ -28,7 +29,7 @@ const ContactForm = () => {
   };
 
   if (isLoading === true) {
-    return <div className="loading">Loading......</div>;
+    return <Loading />;
   }
 
   return (

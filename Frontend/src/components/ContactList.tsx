@@ -3,6 +3,7 @@ import { FaPlus } from "react-icons/fa";
 import { Contact } from "../models/contact";
 import { ContactState, setModalState } from "../stores/contactSlice";
 import ContactCard from "./ContactCard";
+import Loading from "./Loading";
 
 const ContactList = () => {
   const isLoading = useSelector((state: ContactState) => state.isLoading);
@@ -18,7 +19,7 @@ const ContactList = () => {
   };
 
   if (isLoading === true) {
-    return <div className="loading">Loading......</div>;
+    return <Loading />;
   }
 
   return (
