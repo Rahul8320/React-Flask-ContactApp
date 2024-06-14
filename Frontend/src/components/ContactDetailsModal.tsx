@@ -2,6 +2,9 @@ import { Contact } from "../models/contact";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { FaPhoneAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import { FaUserEdit, FaTrash } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { setModalState, setSelectedContact } from "../stores/contactSlice";
 
 type ContactDetailsProps = {
   show: boolean;
@@ -18,19 +21,33 @@ const ContactDetailsModal = ({
     return null;
   }
 
+  const dispatch = useDispatch();
+
   const getInitials = () => {
     return `${contact.firstName[0]}${contact.lastName[0]}`.toUpperCase();
+  };
+
+  const handleEdit = () => {
+    dispatch(setSelectedContact(contact));
+    dispatch(setModalState(true));
   };
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-5 rounded-lg shadow-lg sm:w-3/5 md:w-2/5 lg:w-1/3">
-        <div className="flex justify-between">
-          <h2 className="text-2xl font-semibold mb-4 text-slate-700">
-            Contact Details
-          </h2>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <h2 className="text-2xl font-semibold text-slate-700 mr-5">
+              Contact Details
+            </h2>
+            <FaUserEdit
+              onClick={handleEdit}
+              className="mx-3 text-lg text-slate-500 hover:cursor-pointer hover:text-green-500 hover:scale-110"
+            />
+            <FaTrash className="text-sm text-slate-500 hover:cursor-pointer hover:text-red-500 hover:scale-110" />
+          </div>
           <RiCloseCircleLine
-            className="h-10 w-6 text-gray-500 hover:text-gray-600 hover:cursor-pointer"
+            className="text-xl text-gray-500 hover:text-gray-600 hover:cursor-pointer hover:scale-110"
             onClick={onClose}
           />
         </div>

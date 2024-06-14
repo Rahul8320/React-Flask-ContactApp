@@ -6,6 +6,7 @@ export interface ContactState {
   isLoading: boolean;
   error: string | null;
   isModalOpen: boolean;
+  selectedContact: Contact | null;
 }
 
 const initialState: ContactState = {
@@ -13,13 +14,14 @@ const initialState: ContactState = {
   isLoading: false,
   error: null,
   isModalOpen: false,
+  selectedContact: null,
 };
 
 export const contactSlice = createSlice({
   name: "contact",
   initialState,
   reducers: {
-    setContact: (state, action: { payload: Contact[] }) => {
+    setContacts: (state, action: { payload: Contact[] }) => {
       state.contacts = action.payload;
     },
     setLoading: (state, action: { payload: boolean }) => {
@@ -31,10 +33,18 @@ export const contactSlice = createSlice({
     setModalState: (state, action: { payload: boolean }) => {
       state.isModalOpen = action.payload;
     },
+    setSelectedContact: (state, action: { payload: Contact | null }) => {
+      state.selectedContact = action.payload;
+    },
   },
 });
 
-export const { setContact, setError, setLoading, setModalState } =
-  contactSlice.actions;
+export const {
+  setContacts,
+  setError,
+  setLoading,
+  setModalState,
+  setSelectedContact,
+} = contactSlice.actions;
 
 export default contactSlice.reducer;

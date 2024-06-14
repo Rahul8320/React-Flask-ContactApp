@@ -1,30 +1,43 @@
-import { AddContactModel } from "../models/contact";
+import { AddOrUpdateContactModel } from "../models/contact";
 import { contactService } from "../services/contactService";
 import { useDispatch, useSelector } from "react-redux";
-import { ContactState, setModalState } from "../stores/contactSlice";
+import {
+  ContactState,
+  setModalState,
+  setSelectedContact,
+} from "../stores/contactSlice";
 import Loading from "./Loading";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { useFormContext } from "react-hook-form";
 import { Schema } from "../models/schema";
 import { Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ContactForm = () => {
   const [avatar, setAvatar] = useState<string>("");
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const error = useSelector((state: ContactState) => state.error);
   const isLoading = useSelector((state: ContactState) => state.isLoading);
+  const selectedContact = useSelector(
+    (state: ContactState) => state.selectedContact
+  );
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
     reset,
+    setValue,
   } = useFormContext<Schema>();
 
-  const createContact = async (data: AddContactModel) => {
-    await contactService.createNewContact(data, dispatch);
+  const onSubmitContact = async (data: AddOrUpdateContactModel) => {
+    if (isEditing === true && selectedContact !== null) {
+      await contactService.updateContact(data, selectedContact.id, dispatch);
+    } else {
+      await contactService.createNewContact(data, dispatch);
+    }
 
     setTimeout(() => {
       reset();
@@ -33,8 +46,22 @@ const ContactForm = () => {
 
   const handleClose = () => {
     dispatch(setModalState(false));
+    dispatch(setSelectedContact(null));
     reset();
   };
+
+  useEffect(() => {
+    if (selectedContact !== null) {
+      setValue("avatar", selectedContact.avatar);
+      setValue("email", selectedContact.email);
+      setValue("firstName", selectedContact.firstName);
+      setValue("lastName", selectedContact.lastName);
+      setValue("phoneNumber", selectedContact.phoneNumber);
+
+      setAvatar(selectedContact.avatar);
+      setIsEditing(true);
+    }
+  }, []);
 
   if (isLoading === true) {
     return <Loading />;
@@ -44,7 +71,7 @@ const ContactForm = () => {
     <div>
       <div className="flex justify-between">
         <h2 className="text-2xl font-semibold mb-4 text-slate-700">
-          Add New Contact
+          {isEditing ? "Update Contact" : "Add New Contact"}
         </h2>
         <RiCloseCircleLine
           className="h-10 w-6 text-gray-500 hover:text-gray-600 hover:cursor-pointer"
@@ -60,7 +87,7 @@ const ContactForm = () => {
           />
         )}
       </div>
-      <form onSubmit={handleSubmit(createContact)}>
+      <form onSubmit={handleSubmit(onSubmitContact)}>
         <Stack sx={{ gap: 2 }}>
           <TextField
             {...register("avatar")}
@@ -99,7 +126,7 @@ const ContactForm = () => {
           type="submit"
           disabled={!isValid}
         >
-          Create Contact
+          {isEditing ? "Update Contact" : "Create Contact"}
         </button>
       </form>
       {error && <div className="error">{error}</div>}

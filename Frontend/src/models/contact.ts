@@ -7,7 +7,7 @@ export type Contact = {
   avatar: string;
 };
 
-export type AddContactModel = {
+export type AddOrUpdateContactModel = {
   firstName: string;
   lastName: string;
   email: string;
