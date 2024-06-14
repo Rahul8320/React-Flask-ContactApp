@@ -40,7 +40,7 @@ const ContactDetailsModal = ({
               <img
                 src={contact.avatar}
                 alt={`${contact.firstName} ${contact.lastName}`}
-                className="w-28 h-28 rounded-full mr-3"
+                className="w-32 h-32 rounded-full border-2 border-slate-600 shadow-md"
               />
             ) : (
               <div className="w-28 h-28 rounded-full bg-slate-500 flex items-center justify-center text-stone-100 text-xl mr-3">

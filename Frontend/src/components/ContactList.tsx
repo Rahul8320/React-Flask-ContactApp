@@ -28,6 +28,8 @@ const ContactList = () => {
         Contacts
       </h2>
       <div className="mx-auto">
+        {contacts.length === 0 && <div className="h-52"></div>}
+
         {contacts.map((contact: Contact) => (
           <ContactCard key={contact.id} contact={contact} />
         ))}

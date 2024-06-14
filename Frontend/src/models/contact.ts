@@ -12,4 +12,5 @@ export type AddContactModel = {
   lastName: string;
   email: string;
   phoneNumber: string;
+  avatar?: string;
 };

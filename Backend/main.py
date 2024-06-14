@@ -28,11 +28,16 @@ def create_contact():
     last_name = request.json.get("lastName")
     email = request.json.get("email")
     phone_number = request.json.get("phoneNumber")
+    avatar = request.json.get("avatar")
 
     if not first_name or not last_name or not email or not phone_number:
         return jsonify({"message": "All fields are required!"}), 422
 
-    new_contact = Contact(first_name=first_name, last_name=last_name, email=email, phone_number=phone_number)
+    new_contact = Contact(first_name = first_name, 
+                          last_name = last_name, 
+                          email = email, 
+                          phone_number = phone_number, 
+                          avatar = avatar)
     try:
         db.session.add(new_contact)
         db.session.commit()
@@ -54,6 +59,7 @@ def update_contact(id):
     contact.last_name = data.get("lastName", contact.last_name)
     contact.email = data.get("email", contact.email)
     contact.phone_number = data.get("phoneNumber", contact.phone_number)
+    contact.avatar = data.get("avatar", contact.avatar)
 
     db.session.commit()
 

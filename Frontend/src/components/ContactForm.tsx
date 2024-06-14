@@ -7,8 +7,11 @@ import { RiCloseCircleLine } from "react-icons/ri";
 import { useFormContext } from "react-hook-form";
 import { Schema } from "../models/schema";
 import { Stack, TextField } from "@mui/material";
+import { useState } from "react";
 
 const ContactForm = () => {
+  const [avatar, setAvatar] = useState<string>("");
+
   const dispatch = useDispatch();
   const error = useSelector((state: ContactState) => state.error);
   const isLoading = useSelector((state: ContactState) => state.isLoading);
@@ -48,8 +51,24 @@ const ContactForm = () => {
           onClick={handleClose}
         />
       </div>
+      <div className="flex justify-center">
+        {avatar && (
+          <img
+            src={avatar}
+            alt="Profile Pic"
+            className="w-24 h-24 rounded-full mb-3 border-2 border-slate-500"
+          />
+        )}
+      </div>
       <form onSubmit={handleSubmit(createContact)}>
         <Stack sx={{ gap: 2 }}>
+          <TextField
+            {...register("avatar")}
+            label="Avatar"
+            error={!!errors.avatar}
+            helperText={errors.avatar?.message}
+            onChange={(e) => setAvatar(e.target.value)}
+          />
           <TextField
             {...register("firstName")}
             label="First Name"
