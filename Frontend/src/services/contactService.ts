@@ -106,6 +106,37 @@ class ContactService {
       dispatch(setLoading(false));
     }
   }
+
+  async deleteContact(contactId: number, dispatch: Dispatch): Promise<void> {
+    try {
+      dispatch(setLoading(true));
+      dispatch(setError(""));
+
+      const options = {
+        method: "DELETE",
+      };
+
+      const response = await fetch(
+        `${apiConfig.BaseUrl}/delete-contact/${contactId}`,
+        options
+      );
+      const { message } = await response.json();
+
+      if (response.status === 200) {
+        this.getAllContact(dispatch);
+        alert("Contact deleted successfully");
+        dispatch(setModalState(false));
+      } else if (response.status === 400) {
+        dispatch(setError(message));
+      } else {
+        dispatch(setError("Server Error!"));
+      }
+    } catch (err: any) {
+      dispatch(setError(err.message));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
 }
 
 export const contactService = new ContactService();

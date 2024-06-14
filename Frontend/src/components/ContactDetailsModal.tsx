@@ -5,6 +5,18 @@ import { MdEmail } from "react-icons/md";
 import { FaUserEdit, FaTrash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { setModalState, setSelectedContact } from "../stores/contactSlice";
+import Tooltip from "@mui/material/Tooltip";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+} from "@mui/material";
+import { useState } from "react";
+import { contactService } from "../services/contactService";
 
 type ContactDetailsProps = {
   show: boolean;
@@ -21,6 +33,8 @@ const ContactDetailsModal = ({
     return null;
   }
 
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+
   const dispatch = useDispatch();
 
   const getInitials = () => {
@@ -32,6 +46,19 @@ const ContactDetailsModal = ({
     dispatch(setModalState(true));
   };
 
+  const handleOpenDeleteDialog = () => {
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  const handleDeleteContact = async () => {
+    setOpenDeleteDialog(false);
+    await contactService.deleteContact(contact.id, dispatch);
+  };
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-5 rounded-lg shadow-lg sm:w-3/5 md:w-2/5 lg:w-1/3">
@@ -40,17 +67,45 @@ const ContactDetailsModal = ({
             <h2 className="text-2xl font-semibold text-slate-700 mr-5">
               Contact Details
             </h2>
-            <FaUserEdit
-              onClick={handleEdit}
-              className="mx-3 text-lg text-slate-500 hover:cursor-pointer hover:text-green-500 hover:scale-110"
-            />
-            <FaTrash className="text-sm text-slate-500 hover:cursor-pointer hover:text-red-500 hover:scale-110" />
+            <Tooltip title="Update" className="mx-3">
+              <IconButton onClick={handleEdit}>
+                <FaUserEdit className="text-lg text-slate-500 hover:cursor-pointer hover:text-green-500 hover:scale-110" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete" className="mx-3">
+              <IconButton onClick={handleOpenDeleteDialog}>
+                <FaTrash className="text-sm text-slate-500 hover:cursor-pointer hover:text-red-500 hover:scale-110" />
+              </IconButton>
+            </Tooltip>
           </div>
           <RiCloseCircleLine
             className="text-xl text-gray-500 hover:text-gray-600 hover:cursor-pointer hover:scale-110"
             onClick={onClose}
           />
         </div>
+        <Dialog
+          open={openDeleteDialog}
+          onClose={handleCloseDeleteDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle
+            id="alert-dialog-title"
+            className="text-red-700 font-semibold"
+          >
+            Do you want to delete this contact?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              This operation can not be undone. Please make sure you seriously
+              want to delete this contact.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDeleteDialog}>Disagree</Button>
+            <Button onClick={handleDeleteContact}>Agree</Button>
+          </DialogActions>
+        </Dialog>
         <div className="px-4 py-5">
           <div className="ml-8 mr-5 flex justify-center">
             {contact.avatar ? (

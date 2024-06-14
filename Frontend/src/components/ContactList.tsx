@@ -3,10 +3,8 @@ import { FaPlus } from "react-icons/fa";
 import { Contact } from "../models/contact";
 import { ContactState, setModalState } from "../stores/contactSlice";
 import ContactCard from "./ContactCard";
-import Loading from "./Loading";
 
 const ContactList = () => {
-  const isLoading = useSelector((state: ContactState) => state.isLoading);
   const contacts = useSelector((state: ContactState) => state.contacts);
 
   const dispatch = useDispatch();
@@ -17,10 +15,6 @@ const ContactList = () => {
       dispatch(setModalState(true));
     }
   };
-
-  if (isLoading === true) {
-    return <Loading />;
-  }
 
   return (
     <div className="p-2 relative">

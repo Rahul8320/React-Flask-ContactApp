@@ -6,7 +6,6 @@ import {
   setModalState,
   setSelectedContact,
 } from "../stores/contactSlice";
-import Loading from "./Loading";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { useFormContext } from "react-hook-form";
 import { Schema } from "../models/schema";
@@ -19,7 +18,6 @@ const ContactForm = () => {
 
   const dispatch = useDispatch();
   const error = useSelector((state: ContactState) => state.error);
-  const isLoading = useSelector((state: ContactState) => state.isLoading);
   const selectedContact = useSelector(
     (state: ContactState) => state.selectedContact
   );
@@ -62,10 +60,6 @@ const ContactForm = () => {
       setIsEditing(true);
     }
   }, []);
-
-  if (isLoading === true) {
-    return <Loading />;
-  }
 
   return (
     <div>
