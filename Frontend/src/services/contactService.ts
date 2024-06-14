@@ -8,12 +8,13 @@ import {
   setModalState,
   setSelectedContact,
 } from "../stores/contactSlice";
+import { EnqueueSnackbar } from "notistack";
 
 class ContactService {
   async getAllContact(dispatch: Dispatch): Promise<void> {
     try {
       dispatch(setLoading(true));
-      dispatch(setError(""));
+      dispatch(setError(null));
       const response = await fetch(apiConfig.BaseUrl + "/contacts");
 
       if (response.status === 200) {
@@ -31,11 +32,12 @@ class ContactService {
 
   async createNewContact(
     contact: AddOrUpdateContactModel,
-    dispatch: Dispatch
+    dispatch: Dispatch,
+    enqueueSnackbar: EnqueueSnackbar
   ): Promise<void> {
     try {
       dispatch(setLoading(true));
-      dispatch(setError(""));
+      dispatch(setError(null));
 
       const options = {
         method: "POST",
@@ -53,7 +55,9 @@ class ContactService {
 
       if (response.status === 201) {
         this.getAllContact(dispatch);
-        alert("Contact created successfully");
+        enqueueSnackbar("Contact created successfully", {
+          variant: "success",
+        });
         dispatch(setModalState(false));
       } else if (response.status === 400 || response.status === 422) {
         dispatch(setError(message));
@@ -70,11 +74,12 @@ class ContactService {
   async updateContact(
     contact: AddOrUpdateContactModel,
     contactId: number,
-    dispatch: Dispatch
+    dispatch: Dispatch,
+    enqueueSnackbar: EnqueueSnackbar
   ): Promise<void> {
     try {
       dispatch(setLoading(true));
-      dispatch(setError(""));
+      dispatch(setError(null));
 
       const options = {
         method: "PUT",
@@ -92,7 +97,7 @@ class ContactService {
 
       if (response.status === 200) {
         this.getAllContact(dispatch);
-        alert("Contact updated successfully");
+        enqueueSnackbar("Contact updated successfully", { variant: "success" });
         dispatch(setSelectedContact(null));
         dispatch(setModalState(false));
       } else if (response.status === 400) {
@@ -107,10 +112,14 @@ class ContactService {
     }
   }
 
-  async deleteContact(contactId: number, dispatch: Dispatch): Promise<void> {
+  async deleteContact(
+    contactId: number,
+    dispatch: Dispatch,
+    enqueueSnackbar: EnqueueSnackbar
+  ): Promise<void> {
     try {
       dispatch(setLoading(true));
-      dispatch(setError(""));
+      dispatch(setError(null));
 
       const options = {
         method: "DELETE",
@@ -124,7 +133,7 @@ class ContactService {
 
       if (response.status === 200) {
         this.getAllContact(dispatch);
-        alert("Contact deleted successfully");
+        enqueueSnackbar("Contact deleted successfully", { variant: "success" });
         dispatch(setModalState(false));
       } else if (response.status === 400) {
         dispatch(setError(message));

@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { contactService } from "../services/contactService";
+import { useSnackbar } from "notistack";
 
 type ContactDetailsProps = {
   show: boolean;
@@ -36,6 +37,7 @@ const ContactDetailsModal = ({
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
   const getInitials = () => {
     return `${contact.firstName[0]}${contact.lastName[0]}`.toUpperCase();
@@ -56,7 +58,7 @@ const ContactDetailsModal = ({
 
   const handleDeleteContact = async () => {
     setOpenDeleteDialog(false);
-    await contactService.deleteContact(contact.id, dispatch);
+    await contactService.deleteContact(contact.id, dispatch, enqueueSnackbar);
   };
 
   return (

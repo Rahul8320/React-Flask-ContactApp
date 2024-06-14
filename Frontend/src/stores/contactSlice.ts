@@ -27,7 +27,7 @@ export const contactSlice = createSlice({
     setLoading: (state, action: { payload: boolean }) => {
       state.isLoading = action.payload;
     },
-    setError: (state, action: { payload: string }) => {
+    setError: (state, action: { payload: string | null }) => {
       state.error = action.payload;
     },
     setModalState: (state, action: { payload: boolean }) => {

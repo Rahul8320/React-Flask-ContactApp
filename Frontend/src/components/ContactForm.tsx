@@ -11,16 +11,18 @@ import { useFormContext } from "react-hook-form";
 import { Schema } from "../models/schema";
 import { Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useSnackbar } from "notistack";
 
 const ContactForm = () => {
   const [avatar, setAvatar] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const dispatch = useDispatch();
-  const error = useSelector((state: ContactState) => state.error);
   const selectedContact = useSelector(
     (state: ContactState) => state.selectedContact
   );
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const {
     register,
@@ -32,9 +34,14 @@ const ContactForm = () => {
 
   const onSubmitContact = async (data: AddOrUpdateContactModel) => {
     if (isEditing === true && selectedContact !== null) {
-      await contactService.updateContact(data, selectedContact.id, dispatch);
+      await contactService.updateContact(
+        data,
+        selectedContact.id,
+        dispatch,
+        enqueueSnackbar
+      );
     } else {
-      await contactService.createNewContact(data, dispatch);
+      await contactService.createNewContact(data, dispatch, enqueueSnackbar);
     }
 
     setTimeout(() => {
@@ -123,7 +130,6 @@ const ContactForm = () => {
           {isEditing ? "Update Contact" : "Create Contact"}
         </button>
       </form>
-      {error && <div className="error">{error}</div>}
     </div>
   );
 };
